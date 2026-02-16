@@ -3,11 +3,14 @@ pub mod multi;
 pub mod noop;
 pub mod otel;
 pub mod traits;
+pub mod verbose;
 
 pub use self::log::LogObserver;
+pub use self::multi::MultiObserver;
 pub use noop::NoopObserver;
 pub use otel::OtelObserver;
 pub use traits::{Observer, ObserverEvent};
+pub use verbose::VerboseObserver;
 
 use crate::config::ObservabilityConfig;
 
@@ -22,7 +25,10 @@ pub fn create_observer(config: &ObservabilityConfig) -> Box<dyn Observer> {
             ) {
                 Ok(obs) => {
                     tracing::info!(
-                        endpoint = config.otel_endpoint.as_deref().unwrap_or("http://localhost:4318"),
+                        endpoint = config
+                            .otel_endpoint
+                            .as_deref()
+                            .unwrap_or("http://localhost:4318"),
                         "OpenTelemetry observer initialized"
                     );
                     Box::new(obs)
